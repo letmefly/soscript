@@ -30,11 +30,11 @@ func compileOne(varDefFilePath string, varConfigFilePath string, sourceFilePath 
 	//defer outputFile.Close()
 	varLexer := newLexer("ss", varDefFile)
 	configLexer := newLexer("ss", varConfigFile)
-	//sourceLexer := newLexer("not_ss", sourceFile)
+	sourceLexer := newLexer("not_ss", sourceFile)
 	parser := newParser(varLexer, configLexer)
-	//if sourceLexer != nil {
-	//
-	//}
+	if sourceLexer != nil {
+
+	}
 	//parser.parse(sourceLexer)
 	generator := newServerGen(outputFilePath, parser)
 	generator.gen()
