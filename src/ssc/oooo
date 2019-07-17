@@ -10,22 +10,6 @@ import (
 )
 
 
-func GetProtoUseList() []string {
-	protoUseList := []string{
-	}
-	return protoUseList
-}
-
-func DecodeMessage(codec string, msgName string, msgData []byte) (interface{}, error) {
-	if codec == "protobuf" {
-		switch msgName {
-			
-		}
-	} else if codec == "json" {
-	}
-	return nil, errors.New("no proto support for " + codec)
-}
-
 func EncodeMessage(codec string, msg interface{}) ([]byte, error) {
 	if codec == "protobuf" {
 		buf, err := proto.Marshal(msg.(proto.Message))

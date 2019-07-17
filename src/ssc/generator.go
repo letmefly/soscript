@@ -68,61 +68,61 @@ func (g *ServerGen) gen_header() {
 }
 
 func (g *ServerGen) gen_grpc() {
-	for _, defService := range g.parser.services {
-		//log.Printf("service %s\n", defService.name)
-		for _, rpc := range defService.rpcList {
-			//log.Printf("  %s (%s) (%s) isStream %d %d\n", rpc.name, rpc.param, rpc.ret, rpc.isParamStream, rpc.isRetStream)
-			if rpc.isParamStream && rpc.isRetStream {
-				//rpcStr := strings.Replace(server_gen_grpc_tpl, "#{rpc_name}", rpc.name, -1)
-				//rpcParam := fmt.Sprintf("%s_%sServer", defService.name, defService.name)
-				//rpcStr = strings.Replace(rpcStr, "#{rpc_param}", rpcParam, -1)
-				//rpcRet := fmt.Sprintf("%s_%sServer", defService.name, defService.name)
-				//rpcStr = strings.Replace(rpcStr, "#{rpc_ret}", rpcRet, -1)
-				//g.grpc += rpcStr + "\n"
-				//log.Printf("  %s (stream %s) (stream %s)\n", rpc.name, rpc.param, rpc.ret)
-			} else if rpc.isParamStream {
-				//log.Printf("  %s (stream %s) (%s)\n", rpc.name, rpc.param, rpc.ret)
-				//rpcStr := strings.Replace(server_gen_grpc_tpl, "#{rpc_name}", rpc.name, -1)
-				//rpcStr = strings.Replace(rpcStr, "#{rpc_param}", rpc.param, -1)
-				//rpcStr = strings.Replace(rpcStr, "#{rpc_ret}", rpc.ret, -1)
-				//g.grpc += rpcStr + "\n"
-			} else if rpc.isRetStream {
-				//log.Printf("  %s (%s) (stream %s)\n", rpc.name, rpc.param, rpc.ret)
-			} else {
-				//log.Printf("  %s (%s) (%s)\n", rpc.name, rpc.param, rpc.ret)
-				rpcStr := strings.Replace(msg_gen_grpc_tpl, "#{rpc_name}", rpc.name, -1)
-				rpcStr = strings.Replace(rpcStr, "#{rpc_param}", rpc.param, -1)
-				rpcStr = strings.Replace(rpcStr, "#{rpc_ret}", rpc.ret, -1)
-				g.grpc += rpcStr + "\n"
-			}
-		}
-	}
+	// for _, defService := range g.parser.services {
+	// 	//log.Printf("service %s\n", defService.name)
+	// 	for _, rpc := range defService.rpcList {
+	// 		//log.Printf("  %s (%s) (%s) isStream %d %d\n", rpc.name, rpc.param, rpc.ret, rpc.isParamStream, rpc.isRetStream)
+	// 		if rpc.isParamStream && rpc.isRetStream {
+	// 			//rpcStr := strings.Replace(server_gen_grpc_tpl, "#{rpc_name}", rpc.name, -1)
+	// 			//rpcParam := fmt.Sprintf("%s_%sServer", defService.name, defService.name)
+	// 			//rpcStr = strings.Replace(rpcStr, "#{rpc_param}", rpcParam, -1)
+	// 			//rpcRet := fmt.Sprintf("%s_%sServer", defService.name, defService.name)
+	// 			//rpcStr = strings.Replace(rpcStr, "#{rpc_ret}", rpcRet, -1)
+	// 			//g.grpc += rpcStr + "\n"
+	// 			//log.Printf("  %s (stream %s) (stream %s)\n", rpc.name, rpc.param, rpc.ret)
+	// 		} else if rpc.isParamStream {
+	// 			//log.Printf("  %s (stream %s) (%s)\n", rpc.name, rpc.param, rpc.ret)
+	// 			//rpcStr := strings.Replace(server_gen_grpc_tpl, "#{rpc_name}", rpc.name, -1)
+	// 			//rpcStr = strings.Replace(rpcStr, "#{rpc_param}", rpc.param, -1)
+	// 			//rpcStr = strings.Replace(rpcStr, "#{rpc_ret}", rpc.ret, -1)
+	// 			//g.grpc += rpcStr + "\n"
+	// 		} else if rpc.isRetStream {
+	// 			//log.Printf("  %s (%s) (stream %s)\n", rpc.name, rpc.param, rpc.ret)
+	// 		} else {
+	// 			//log.Printf("  %s (%s) (%s)\n", rpc.name, rpc.param, rpc.ret)
+	// 			rpcStr := strings.Replace(msg_gen_grpc_tpl, "#{rpc_name}", rpc.name, -1)
+	// 			rpcStr = strings.Replace(rpcStr, "#{rpc_param}", rpc.param, -1)
+	// 			rpcStr = strings.Replace(rpcStr, "#{rpc_ret}", rpc.ret, -1)
+	// 			g.grpc += rpcStr + "\n"
+	// 		}
+	// 	}
+	// }
 }
 
 func (g *ServerGen) gen_msg_decode() {
-	g.msgDecode += msg_gen_decode_tpl
-	decode_case_list := ""
-	for _, defType := range g.parser.types {
-		//log.Printf("%s %s %s\n", defType.parentType, defType.def, defType.name)
-		if defType.def == "message" && defType.parentType == "" {
-			decode_case := msg_gen_decode_case_tpl
-			decode_case = strings.Replace(decode_case, "#{server_name}", g.serverName, -1)
-			decode_case = strings.Replace(decode_case, "#{message_name}", defType.name, -1)
-			decode_case_list += decode_case
-		}
-	}
-	g.msgDecode = strings.Replace(g.msgDecode, "#{decode_case_list}", decode_case_list, -1)
+	// g.msgDecode += msg_gen_decode_tpl
+	// decode_case_list := ""
+	// for _, defType := range g.parser.types {
+	// 	//log.Printf("%s %s %s\n", defType.parentType, defType.def, defType.name)
+	// 	if defType.def == "message" && defType.parentType == "" {
+	// 		decode_case := msg_gen_decode_case_tpl
+	// 		decode_case = strings.Replace(decode_case, "#{server_name}", g.serverName, -1)
+	// 		decode_case = strings.Replace(decode_case, "#{message_name}", defType.name, -1)
+	// 		decode_case_list += decode_case
+	// 	}
+	// }
+	// g.msgDecode = strings.Replace(g.msgDecode, "#{decode_case_list}", decode_case_list, -1)
 }
 
 func (g *ServerGen) gen_to_msg() {
-	for _, defType := range g.parser.types {
-		if defType.def == "message" && defType.parentType == "" {
-			toMsgStr := msg_gen_to_msg_tpl
-			toMsgStr = strings.Replace(toMsgStr, "#{message_name}", defType.name, -1)
-			toMsgStr = strings.Replace(toMsgStr, "#{server_name}", g.serverName, -1)
-			g.toMsg += toMsgStr
-		}
-	}
+	// for _, defType := range g.parser.types {
+	// 	if defType.def == "message" && defType.parentType == "" {
+	// 		toMsgStr := msg_gen_to_msg_tpl
+	// 		toMsgStr = strings.Replace(toMsgStr, "#{message_name}", defType.name, -1)
+	// 		toMsgStr = strings.Replace(toMsgStr, "#{server_name}", g.serverName, -1)
+	// 		g.toMsg += toMsgStr
+	// 	}
+	// }
 }
 
 func (g *ServerGen) gen_msg_encode() {
@@ -153,15 +153,15 @@ func (g *ServerGen) gen_clientApi() {
 }
 
 func (g *ServerGen) gen_protoUseList() {
-	messageList := ""
-	for _, defType := range g.parser.types {
-		if defType.def == "message" && defType.parentType == "" {
-			messageList += "\n		\"" + defType.name + "\"" + ","
-		}
-	}
-	protoUseList := msg_gen_protouse_tpl
-	protoUseList = strings.Replace(protoUseList, "#{proto_use_list}", messageList, -1)
-	g.protoUseList = protoUseList
+	// messageList := ""
+	// for _, defType := range g.parser.types {
+	// 	if defType.def == "message" && defType.parentType == "" {
+	// 		messageList += "\n		\"" + defType.name + "\"" + ","
+	// 	}
+	// }
+	// protoUseList := msg_gen_protouse_tpl
+	// protoUseList = strings.Replace(protoUseList, "#{proto_use_list}", messageList, -1)
+	// g.protoUseList = protoUseList
 }
 
 func (g *ServerGen) gen_pbServerRegister() {

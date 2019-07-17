@@ -22,3 +22,4 @@ let serverAddr = "http://localhost:8888"
 
 ssc.exe -v def.ss -c wechat_conf.ss -s sss -o oooo
 go build . && ssc.exe compile -v def.ss -c wechat_conf.ss -s test.java -o oooo
+go build . && ./ssc compile -v def.ss -c wechat_conf.ss -s test.java -o oooo
