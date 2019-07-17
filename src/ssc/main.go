@@ -32,10 +32,7 @@ func compileOne(varDefFilePath string, varConfigFilePath string, sourceFilePath 
 	configLexer := newLexer("ss", varConfigFile)
 	sourceLexer := newLexer("not_ss", sourceFile)
 	parser := newParser(varLexer, configLexer)
-	if sourceLexer != nil {
-
-	}
-	//parser.parse(sourceLexer)
+	parser.parseSourceCode(sourceLexer)
 	generator := newServerGen(outputFilePath, parser)
 	generator.gen()
 }
