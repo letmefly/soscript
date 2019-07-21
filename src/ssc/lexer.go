@@ -11,7 +11,13 @@ import (
 const (
 	TOKEN_MIN            = iota
 	TOKEN_COMMENT         // //
+	TOKEN_NUMBER
+	TOKEN_STRING
 	TOKEN_EQUAL           // ==
+	TOKEN_GREAT_EQUAL     // >=
+	TOKEN_LESS_EQUAL      // <=
+	TOKEN_GREAT           // >
+	TOKEN_LESS			  // <
 	TOKEN_ASSIGN          // =
 	TOKEN_COMMA           // ,
 	TOKEN_COLON           // :
@@ -24,8 +30,8 @@ const (
 	TOKEN_KEYWORD_PRINT   // print
 	TOKEN_KEYWORD_AND     // &&
 	TOKEN_KEYWORD_OR      // ||
-	TOKEN_NUMBER
-	TOKEN_STRING
+	TOKEN_KEYWORD_NOT	  // !
+
 	TOKEN_SYMBOL
 
 	//TOKEN_DEFAULT_CODE
@@ -59,10 +65,10 @@ var token_rules = map[int]string{
 	TOKEN_BRACKETS_LEFT:  `\s*\(\s*`,
 	TOKEN_BRACKETS_RIGHT: `\s*\)\s*`,
 	//TOKEN_QUOTE:            `\s*"\s*`,
-	TOKEN_KEYWORD_IF:    `^\s*if\s+`,
-	TOKEN_KEYWORD_PRINT: `^\s*print\s+`,
-	TOKEN_KEYWORD_AND:   `^\s*&&\s+`,
-	TOKEN_KEYWORD_OR:    `^\s*\|\|\s+`,
+	TOKEN_KEYWORD_IF:    `\s*if\s*`,
+	TOKEN_KEYWORD_PRINT: `\s*print\s*`,
+	TOKEN_KEYWORD_AND:   `\s*&&\s*`,
+	TOKEN_KEYWORD_OR:    `\s*\|\|\s*`,
 	TOKEN_STRING:        `\s*"[^"]+"\s*`,
 	TOKEN_SYMBOL:        `\s*[\w]+\s*`,
 	TOKEN_NUMBER:        `\s*[\d]+\s*`,
@@ -295,7 +301,7 @@ func (lexer *Lexer) takeToken() *Token {
 	}
 	ret := lexer.tokens[lexer.currTokenIdx]
 	lexer.currTokenIdx++
-	//fmt.Println("takeToken: ", ret.text)
+	fmt.Println("takeToken: ", ret.text)
 	return ret
 }
 

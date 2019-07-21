@@ -12,10 +12,10 @@ let serverAddr = "http://localhost:8888"
 
 // <line> switch1 = (version == "1.0.1" && platform == "android") </line>
 // <line> switch2 = (version == "1.0.2" && platform == "ios") </line>
-// <line> let switch3 = (version == "1.0.1" && platform == "wechat") </line>
-// <line> if (switch1) print(<code> let serverAddr = "http://localhost:8888" </code>) </line>
-// <line> if (switch2) print(<code> let serverAddr = "http://localhost:8888" </code>) </line>
-// <line> if (switch3) print(<code> let serverAddr = <var>addr</var> </code>) </line>
+// <line> switch3 = (version == "1.0.1" && platform == "wechat") </line>
+// <line> if (switch1) => print(<code> let serverAddr = "http://localhost:8888" </code>) </line>
+// <line> if (switch2) => print(<code> let serverAddr = "http://localhost:8888" </code>) </line>
+// <line> if (switch3) => print(<code> let serverAddr = <var>addr</var> </code>) </line>
 
 // </soscript>
 
