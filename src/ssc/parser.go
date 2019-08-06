@@ -1,7 +1,10 @@
 package main
-import(
+
+import (
 	"fmt"
-	"log")
+	"log"
+)
+
 /*
 BNF Design:
 <variable_declare> ::= <identifier>: {<variable_val>}
@@ -16,8 +19,8 @@ BNF Design:
 
 <variable_assign> ::= <identifier> = <const_val>
 
-<if_expr> ::= if(<logic_calc_expr>) <print_expr>     | 
-			  if(<logic_calc_expr>) <variable_assign> 
+<if_expr> ::= if(<logic_calc_expr>) <print_expr>     |
+			  if(<logic_calc_expr>) <variable_assign>
 
 <logic_calc_expr> ::= <logic_calc_expr> || <logic_term>    |
 					<logic_term>
@@ -29,20 +32,20 @@ BNF Design:
 
 <code_expr> ::= <string>
 
-<tag> ::= "<soscript>" | "</soscript>" | "<default>" | "</default>" | "<line>" | "</line>" | "<code>" | "</code>" | "<var>" | "</var>" 
+<tag> ::= "<soscript>" | "</soscript>" | "<default>" | "</default>" | "<line>" | "</line>" | "<code>" | "</code>" | "<var>" | "</var>"
 */
 
 type VarDeclare struct {
-	name string
+	name    string
 	varType string
 	valList []string
-	scope string
+	scope   string
 	currVal string
 }
 
 type Soscript struct {
-	startLineno int
-	endLineno int
+	startLineno   int
+	endLineno     int
 	varDeclareSet map[string]*VarDeclare
 }
 
@@ -51,14 +54,14 @@ type Parser struct {
 	configLexer   *Lexer
 	sourceLexer   *Lexer
 	varDeclareSet map[string]*VarDeclare
-	soscriptList []*Soscript
+	soscriptList  []*Soscript
 }
 
 func newParser(defLexer *Lexer, configLexer *Lexer) *Parser {
 	p := &Parser{
 		varDeclareSet: make(map[string]*VarDeclare, 0),
-		defLexer: defLexer,
-		configLexer: configLexer,
+		defLexer:      defLexer,
+		configLexer:   configLexer,
 	}
 	p.init()
 	return p
@@ -83,10 +86,10 @@ func (p *Parser) parseDef() {
 	}
 }
 
-func (p *Parser) parse_var_declare(token *Token)  {
+func (p *Parser) parse_var_declare(token *Token) {
 	_, ok := p.varDeclareSet[token.text]
 	if ok {
-		ParseError(token, "this variable has been decleared!");
+		ParseError(token, "this variable has been decleared!")
 	}
 	varName := token.text
 	p.varDeclareSet[varName] = &VarDeclare{name: varName, varType: "", valList: make([]string, 0), scope: "GLOBAL"}
@@ -118,7 +121,7 @@ func (p *Parser) addGlobalVarVal(varName string, varType string, token *Token) {
 		ParseError(token, "var type not the same!")
 	}
 	varDeclare.varType = varType
-	
+
 	varDeclare.valList = append(varDeclare.valList, token.text)
 	//log.Println("Global varible ", varName, varType, token.text)
 }
@@ -181,7 +184,7 @@ func (p *Parser) parseSourceCode(sourceLexer *Lexer) {
 }
 
 func (p *Parser) parse_soscript(token *Token) {
-	soscript :=  &Soscript{startLineno: token.lineno, varDeclareSet: make(map[string]*VarDeclare, 0)}
+	soscript := &Soscript{startLineno: token.lineno, varDeclareSet: make(map[string]*VarDeclare, 0)}
 	p.soscriptList = append(p.soscriptList, soscript)
 	p.checkSourceToken(TAG_DEFAULT_START)
 	p.checkSourceToken(TAG_DEFAULT_END)
@@ -213,13 +216,14 @@ func (p *Parser) parse_soscript_assign(soscript *Soscript, token *Token) {
 	varName := token.text
 	p.checkSourceToken(TOKEN_ASSIGN)
 	varVal := fmt.Sprintf("%s", p.parse_logic_expr(soscript))
-	varDeclare := &VarDeclare{name:varName, varType:"BOOL", currVal:varVal}
+	varDeclare := &VarDeclare{name: varName, varType: "BOOL", currVal: varVal}
 	soscript.varDeclareSet[varName] = varDeclare
 }
 
 func (p *Parser) parse_soscript_if(soscript *Soscript, token *Token) {
 	p.checkSourceToken(TOKEN_BRACKETS_LEFT)
-	p.parse_logic_expr(soscript)
+	val := p.parse_logic_expr(soscript)
+	fmt.Println("parse_soscript_if: ", val)
 	p.checkSourceToken(TOKEN_BRACKETS_RIGHT)
 	p.checkSourceToken(TOKEN_KEYWORD_PRINT)
 	p.checkSourceToken(TOKEN_BRACKETS_LEFT)
@@ -231,12 +235,16 @@ func (p *Parser) parse_soscript_if(soscript *Soscript, token *Token) {
 
 func (p *Parser) parse_logic_expr(soscript *Soscript) bool {
 	val := false
+	over := false
 	for p.sourceLexer.nextTokenType() != -1 {
+		if over {
+			break
+		}
 		switch p.sourceLexer.nextTokenType() {
 		case TOKEN_KEYWORD_OR:
-			val = p.parse_logic_expr_or(soscript, p.sourceLexer.takeToken())
+			val = p.parse_logic_expr_or(soscript, p.sourceLexer.takeToken(), val)
 		case TOKEN_KEYWORD_AND:
-			val = p.parse_logic_expr_and(soscript, p.sourceLexer.takeToken())
+			val = p.parse_logic_expr_and(soscript, p.sourceLexer.takeToken(), val)
 		case TOKEN_BRACKETS_LEFT:
 			p.checkSourceToken(TOKEN_BRACKETS_LEFT)
 			for p.sourceLexer.nextTokenType() != TOKEN_BRACKETS_RIGHT {
@@ -247,11 +255,11 @@ func (p *Parser) parse_logic_expr(soscript *Soscript) bool {
 			token := p.sourceLexer.takeToken()
 			switch p.sourceLexer.nextTokenType() {
 			case TOKEN_KEYWORD_OR:
-				val = p.parse_logic_expr_or(soscript, token)
+				val = p.parse_logic_expr_or(soscript, token, val)
 			case TOKEN_KEYWORD_AND:
-				val = p.parse_logic_expr_and(soscript, token)
+				val = p.parse_logic_expr_and(soscript, token, val)
 			case TOKEN_KEYWORD_NOT:
-				val = p.parse_logic_expr_not(soscript, token)
+				val = p.parse_logic_expr_not(soscript, token, val)
 			case TOKEN_EQUAL:
 				val = p.parse_logic_expr_equel(soscript, token)
 			case TOKEN_GREAT:
@@ -262,27 +270,46 @@ func (p *Parser) parse_logic_expr(soscript *Soscript) bool {
 				val = p.parse_code_expr_symbol(soscript, token)
 				break
 			}
-		case TOKEN_BRACKETS_RIGHT: break
+		case TOKEN_BRACKETS_RIGHT:
+			over = true
 		}
-
 	}
-
 	return val
 }
 
-func (p *Parser) parse_logic_expr_and(soscript *Soscript, token *Token) bool {
-	val := p.parse_code_expr_symbol(soscript, token)
-	p.checkSourceToken(TOKEN_KEYWORD_AND)
-	return val && p.parse_logic_expr(soscript)
+func (p *Parser) parse_brackets_left(soscript *Soscript) bool {
+	return true
 }
 
-func (p *Parser) parse_logic_expr_or(soscript *Soscript, token *Token) bool {
-	val := p.parse_code_expr_symbol(soscript, token)
-	p.checkSourceToken(TOKEN_KEYWORD_OR)
-	return val || p.parse_logic_expr(soscript)
+func (p *Parser) parse_logic_expr_and(soscript *Soscript, token *Token, currVal bool) bool {
+	switch token.tokenType {
+	case TOKEN_SYMBOL:
+		val := p.parse_code_expr_symbol(soscript, token)
+		p.checkSourceToken(TOKEN_KEYWORD_AND)
+		return val && p.parse_logic_expr(soscript)
+	case TOKEN_KEYWORD_AND:
+		ret := p.parse_logic_expr(soscript)
+		return currVal && ret
+	}
+	ParseError(token, "syntax error!")
+	return false
 }
 
-func (p *Parser) parse_logic_expr_not(soscript *Soscript, token *Token) bool {
+func (p *Parser) parse_logic_expr_or(soscript *Soscript, token *Token, currVal bool) bool {
+	switch token.tokenType {
+	case TOKEN_SYMBOL:
+		val := p.parse_code_expr_symbol(soscript, token)
+		p.checkSourceToken(TOKEN_KEYWORD_OR)
+		return val || p.parse_logic_expr(soscript)
+	case TOKEN_KEYWORD_OR:
+		ret := p.parse_logic_expr(soscript)
+		return currVal || ret
+	}
+	ParseError(token, "syntax error!")
+	return false
+}
+
+func (p *Parser) parse_logic_expr_not(soscript *Soscript, token *Token, currVal bool) bool {
 	p.checkSourceToken(TOKEN_KEYWORD_NOT)
 	val := p.parse_code_expr_symbol(soscript, token)
 	return !val
@@ -295,13 +322,13 @@ func (p *Parser) parse_logic_expr_equel(soscript *Soscript, token *Token) bool {
 	rightToken := p.sourceLexer.takeToken()
 	switch rightToken.tokenType {
 	case TOKEN_NUMBER:
-		val = varDef.currVal == rightToken.text
+		val = (varDef.currVal == rightToken.text)
 	case TOKEN_STRING:
-		val = varDef.currVal == rightToken.text
+		val = (varDef.currVal == rightToken.text)
 	case TOKEN_SYMBOL:
 		val = p.parse_code_expr_symbol(soscript, rightToken)
 	}
-	return !val
+	return val
 }
 
 func (p *Parser) parse_code_expr_symbol(soscript *Soscript, token *Token) bool {
@@ -329,7 +356,7 @@ func (p *Parser) checkVar(sososcript *Soscript, varName string) *VarDeclare {
 	if ok {
 		return valDef
 	}
-	log.Panicln("ERR: no var defined in config file for "+ varName)
+	log.Panicln("ERR: no var defined in config file for " + varName)
 	return nil
 }
 

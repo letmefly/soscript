@@ -3,7 +3,7 @@
 String serverAddr = "http://localhost:8888";
 // </default>
 
-// <line> if(version == "1.0.1" || mode == "debug") print(<code> let serverAddr = "http://localhost:8888" </code>) </line>
+// <line> if((version == "1.0.1") && (mode == "release" || platform=="android")) print(<code> let serverAddr = "http://localhost:8888" </code>) </line>
 // <line> if(version == "1.0.1" && mode == "release") print(<code> let serverAddr = "http://localhost:8888" </code>) </line>
 // <line> if(version == "1.0.1") print(<code> let serverAddr = "http://localhost:8888" </code>) </line>
 

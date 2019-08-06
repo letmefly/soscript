@@ -41,6 +41,7 @@ func compileDir(varDefFilePath string, varConfigFilePath string, sourceDir strin
 
 }
 
+// go build . && ./ssc compile --variable def.ss --config wechat_conf.ss --source test.java --output output_test.java
 func main() {
 	app := cli.NewApp()
 	app.Commands = []cli.Command{

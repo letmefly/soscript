@@ -9,28 +9,28 @@ import (
 )
 
 const (
-	TOKEN_MIN            = iota
-	TOKEN_COMMENT         // //
+	TOKEN_MIN     = iota
+	TOKEN_COMMENT // //
 	TOKEN_NUMBER
 	TOKEN_STRING
-	TOKEN_EQUAL           // ==
-	TOKEN_GREAT_EQUAL     // >=
-	TOKEN_LESS_EQUAL      // <=
-	TOKEN_GREAT           // >
-	TOKEN_LESS			  // <
-	TOKEN_ASSIGN          // =
-	TOKEN_COMMA           // ,
-	TOKEN_COLON           // :
-	TOKEN_BRACE_LEFT      // {
-	TOKEN_BRACE_RIGHT     // }
-	TOKEN_BRACKETS_LEFT   // (
-	TOKEN_BRACKETS_RIGHT  // )
-	TOKEN_QUOTE           // "
-	TOKEN_KEYWORD_IF      // if
-	TOKEN_KEYWORD_PRINT   // print
-	TOKEN_KEYWORD_AND     // &&
-	TOKEN_KEYWORD_OR      // ||
-	TOKEN_KEYWORD_NOT	  // !
+	TOKEN_EQUAL          // ==
+	TOKEN_GREAT_EQUAL    // >=
+	TOKEN_LESS_EQUAL     // <=
+	TOKEN_GREAT          // >
+	TOKEN_LESS           // <
+	TOKEN_ASSIGN         // =
+	TOKEN_COMMA          // ,
+	TOKEN_COLON          // :
+	TOKEN_BRACE_LEFT     // {
+	TOKEN_BRACE_RIGHT    // }
+	TOKEN_BRACKETS_LEFT  // (
+	TOKEN_BRACKETS_RIGHT // )
+	TOKEN_QUOTE          // "
+	TOKEN_KEYWORD_IF     // if
+	TOKEN_KEYWORD_PRINT  // print
+	TOKEN_KEYWORD_AND    // &&
+	TOKEN_KEYWORD_OR     // ||
+	TOKEN_KEYWORD_NOT    // !
 
 	TOKEN_SYMBOL
 
@@ -73,21 +73,20 @@ var token_rules = map[int]string{
 	TOKEN_SYMBOL:        `\s*[\w]+\s*`,
 	TOKEN_NUMBER:        `\s*[\d]+\s*`,
 
-
 	TAG_SOSCRIPT_START: `<soscript>`,
-	TAG_SOSCRIPT_END: `</soscript>`,
+	TAG_SOSCRIPT_END:   `</soscript>`,
 
 	TAG_DEFAULT_START: `<default>`,
-	TAG_DEFAULT_END: `</default>`,
+	TAG_DEFAULT_END:   `</default>`,
 
 	TAG_LINE_START: `<line>`,
-	TAG_LINE_END: `</line>`,
+	TAG_LINE_END:   `</line>`,
 
 	TAG_CODE_START: `<code>`,
-	TAG_CODE_END: `</code>`,
+	TAG_CODE_END:   `</code>`,
 
-	TAG_VAR_START:`<var>`,
-	TAG_VAR_END: `</var>`,
+	TAG_VAR_START: `<var>`,
+	TAG_VAR_END:   `</var>`,
 }
 
 type Token struct {
@@ -104,7 +103,7 @@ type Lexer struct {
 	currTokenIdx int
 
 	in_soscript bool
-	in_default bool
+	in_default  bool
 	//in_line bool
 	//in_code bool
 	//in_var bool
@@ -113,7 +112,7 @@ type Lexer struct {
 func newLexer(fileType string, reader io.Reader) *Lexer {
 	lexer := &Lexer{
 		in_soscript: false,
-		in_default: false,
+		in_default:  false,
 		//in_line: false,
 		//in_code: false,
 		//in_var: false,
@@ -309,5 +308,15 @@ func (lexer *Lexer) nextTokenType() int {
 	if lexer.currTokenIdx >= len(lexer.tokens) {
 		return -1
 	}
-	return lexer.tokens[lexer.currTokenIdx].tokenType
+	ret := lexer.tokens[lexer.currTokenIdx]
+	//fmt.Println("nextTokenType: ", ret.text)
+	return ret.tokenType
+}
+
+func (lexer *Lexer) currToken() *Token {
+	if lexer.currTokenIdx >= len(lexer.tokens) {
+		return nil
+	}
+	ret := lexer.tokens[lexer.currTokenIdx]
+	return ret
 }
